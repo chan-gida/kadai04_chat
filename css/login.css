@@ -1,0 +1,64 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    list-style: none;
+    text-decoration: none;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+/* ビデオ背景*/
+.mainvisual {
+    position: relative;
+}
+
+.video-wrap video {
+    background-size: cover;
+    min-width: 100%;
+    min-height: 100vh;
+}
+
+.intro {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 40px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+h1 {
+    text-align: center;
+
+    margin: 50px 0;
+    font-size: 20px;
+}
+
+.mail_pass {
+    padding: 15px;
+}
+
+input {
+    width: 500px;
+    padding: 10px;
+    display: block;
+    margin: 0 auto 50px;
+}
+
+textarea {
+    width: 500px;
+    height: 200px;
+    padding: 10px;
+    margin: 0 auto 50px;
+    display: block;
+    resize: none;
+}
+
+button {
+    width: 200px;
+    height: 50px;
+    margin: 0 auto 50px;
+    display: block;
+    font-size: 16px;
+}
