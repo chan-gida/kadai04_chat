@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>みんなでチャット</title>
+    <link rel="stylesheet" href="/css/chat.css" />
+</head>
+
+<header>
+    <div class="header__inner">
+        <!-- タイトル表示 -->
+        <div class="title">
+            <h1>みんなでチャット</h1>
+        </div>
+
+        <!-- ログインID表示 -->
+        <div class="header_id">
+            <p>ログインID</p>
+            <div class="login_id"></div>
+        </div>
+
+        <!-- ハンバーガーメニュー -->
+        <div class="hamburger_menu">
+            <button id="js-hamburger" type="button" class="hamburger" aria-controls="navigation" aria-expanded="false"
+                aria-label="メニューを開く">
+                <span class="hamburger__line"></span>
+                <span class="hamburger__text"></span>
+            </button>
+            <div class="header__nav-area js-nav-area" id="navigation">
+                <nav id="js-global-navigation" class="global-navigation">
+                    <ul class="global-navigation__list">
+                        <li>
+                            <a href="#" class="global-navigation__link_accountregi">
+                                アカウント管理(工事中)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="global-navigation__link_signout">
+                                ログアウト
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="global-navigation__link_accountdelete">
+                                アカウント削除
+                            </a>
+                        </li>
+                    </ul>
+                    <div id="js-focus-trap" tabindex="0"></div>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+</header>
+
+<body>
+    <div class="main">
+        <!-- コンテンツ表示画面 -->
+        <div class="mainvisual"><img src="/img/bluesky2-unsplash.jpg" alt="青空"></div>
+        <!-- 各場所にidを設定しましょう -->
+        <div class="chat">
+            <div class="input">
+                <div class="input_text">
+                    <div class="message">
+                        <textarea id="text" placeholder="メッセージを入力してください"></textarea>
+                        <button id="send">送信</button>
+                    </div>
+                </div>
+            </div>
+            <div class="output"></div>
+        </div>
+    </div>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="/js/chat.js"></script>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js";
+        import { getDatabase, ref, push, set, onChildAdded, remove, onChildRemoved } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, reauthenticateWithCredential, EmailAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-auth.js";
+        import { signOut } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-auth.js";
+        import { EmailAuthProvider, reauthenticateWithCredential, deleteUser } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-auth.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        const app = initializeApp(firebaseConfig); //初期化して使えるスイッチオン
+        const db = getDatabase(app); //RealtimeDBに接続
+        const dbRef = ref(db, "chat"); //RealtimeDB内の"chat"を使う  ref=参照
+        const auth = getAuth(app); //Authentication接続
+        let currentUser = null; //現在のユーザー名を取得
+
+        // ユーザー情報確認
+        onAuthStateChanged(auth, function (user) {
+            if (user) {
+                // ログインしている場合、ユーザー情報を取得
+                currentUser = user;
+                console.log("ユーザーID:", currentUser.uid); // UIDをログに表示
+                console.log("ユーザー情報:", currentUser); // 全ユーザー情報を表示
+                //jQueryを使って画面に表示
+                $(".login_id").append(currentUser.uid);
+            } else {
+                // ログインしていない場合
+                console.log("ユーザーはログインしていません");
+            }
+        });
+
+        //データ登録(Click)
+        $("#send").on("click", function () {
+            const uname = currentUser.uid; //ユーザーID登録
+            const text = $("#text").val(); //inputと変数名classとは同じ名前が良い
+            const timestamp = new Date().toISOString(); //Timeスタンプ取得
+            alert(timestamp + uname + text)
+
+            const msg = {
+                uname: currentUser.uid,
+                text: $("#text").val(),
+                timestamp: timestamp
+            }
+            const newPostRef = push(dbRef)
+            set(newPostRef, msg);
+        })
+
+        //firebaseに登録が終わったら、入力欄を空欄にします
+        $("#uname").val(""); //""で空欄にする
+        $("#text").val("");
+
+        //最初にデータ取得＆onSnapshotでリアルタイムにデータを取得
+        onChildAdded(dbRef, function (data) {  //function(data)のdataは仮引数 ←dataに何が書かれてようが意味がない。何を使っているか分かり易いものを入れておくのが良い
+            const msg = data.val(); //dataは仮の名前=何でも良い。分かりやすいように
+            const key = data.key;
+            // const formattedDate = date.toISOString().split('T')[0].replaceAll("-", "/");// ISO形式のタイムスタンプを分解して日付を取得
+
+            //hはhtmlの略
+            let h = ` 
+                    <div id >
+                        <p>${msg.uname}</p>
+                        <p>${msg.text}</p>
+                        <p>${msg.timestamp}</p>
+                    </div>
+                `
+
+            //jQueryを使って画面に表示
+            $(".output").append(h);
+
+
+            // ログアウト
+            $('.global-navigation__link_signout').on('click', async function () {
+                await signOut(auth); //サインアウト関数
+                alert("ログアウトしました")
+                window.location.href = "/index.html"; // 遷移先URL;
+            });
+
+            // アカウント削除
+            $('.global-navigation__link_accountdelete').on('click', async function () {
+                alert("アカウント削除しました")
+
+                const credential = EmailAuthProvider.credential(
+                    auth.currentUser.email,
+                    userProvidedPassword
+                )
+                const result = await reauthenticateWithCredential(
+                    auth.currentUser,
+                    credential
+                )
+                // User successfully reauthenticated. New ID tokens should be valid.
+
+                reauthenticateWithCredential(user, credential).then(function () {
+                    // User re-authenticated.
+                    deleteUser(user).then(() => {     // User deleted.
+                        alert('アカウントの削除に成功しました');
+                        // window.location.href = "/index.html"; // 遷移先URL;
+                    }).catch((error) => { // An error ocurred
+                        alert('アカウントの削除に失敗しました');
+                    });
+                }).catch((error) => { // An error ocurred
+                    alert('何らかのエラーが発生しました')
+                });
+                // window.location.href = "/index.html"; // 遷移先URL;
+            }, false);
+
+            //この下は消さない
+        })
+    </script>
+
+    <!-- /#footer -->
+    <footer class="footer">
+        <div class="footer-text">
+            Copyrights 2024 Kosuke Yanagida All RIghts Reserved.
+        </div>
+    </footer>
+</body>
+
+</html>
