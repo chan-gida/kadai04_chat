@@ -15,7 +15,7 @@
     <!-- 背景 -->
     <div class="mainvisual">
         <div class="video-wrap">
-            <video src="/img/bluesky_1280x720.mp4" autoplay loop muted playsinline>
+            <video src="./img/bluesky_1280x720.mp4" autoplay loop muted playsinline>
         </div>
 
         <!-- コンテンツ表示画面 -->
@@ -64,7 +64,7 @@
 
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                window.location.href = "/chat.html"; // 遷移先URL
+                window.location.href = "./chat.html"; // 遷移先URL
             } catch (error) {
                 alert('エラー: ' + error.message);
             }
