@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>みんなでチャット</title>
-    <link rel="stylesheet" href="/css/chat.css" />
+    <link rel="stylesheet" href="./css/chat.css" />
 </head>
 
 <header>
@@ -58,7 +58,7 @@
 <body>
     <div class="main">
         <!-- コンテンツ表示画面 -->
-        <div class="mainvisual"><img src="/img/bluesky2-unsplash.jpg" alt="青空"></div>
+        <div class="mainvisual"><img src="./img/bluesky2-unsplash.jpg" alt="青空"></div>
         <!-- 各場所にidを設定しましょう -->
         <div class="chat">
             <div class="input">
@@ -75,7 +75,7 @@
 
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="/js/chat.js"></script>
+    <script src="./js/chat.js"></script>
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js";
@@ -157,7 +157,7 @@
             $('.global-navigation__link_signout').on('click', async function () {
                 await signOut(auth); //サインアウト関数
                 alert("ログアウトしました")
-                window.location.href = "/index.html"; // 遷移先URL;
+                window.location.href = "./index.html"; // 遷移先URL;
             });
 
             // アカウント削除
@@ -178,7 +178,7 @@
                     // User re-authenticated.
                     deleteUser(user).then(() => {     // User deleted.
                         alert('アカウントの削除に成功しました');
-                        // window.location.href = "/index.html"; // 遷移先URL;
+                        // window.location.href = "./index.html"; // 遷移先URL;
                     }).catch((error) => { // An error ocurred
                         alert('アカウントの削除に失敗しました');
                     });
